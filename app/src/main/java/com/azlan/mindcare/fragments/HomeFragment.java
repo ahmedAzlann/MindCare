@@ -17,10 +17,12 @@ import android.widget.TextView;
 import com.azlan.mindcare.DailyAffirmationActivity;
 import com.azlan.mindcare.GuidedExerciseActivity;
 import com.azlan.mindcare.LoginActivity;
-import com.azlan.mindcare.MainActivity;
 import com.azlan.mindcare.MoodCameraActivity;
 import com.azlan.mindcare.MoodGraphActivity;
 import com.azlan.mindcare.R;
+import com.azlan.mindcare.SleepTrackerActivity;
+import com.azlan.mindcare.VoiceRecorder;
+import com.azlan.mindcare.FunModeActivity;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -36,6 +38,7 @@ public class HomeFragment extends Fragment {
     FirebaseAuth firebaseAuth;
     String currentUserId;
     TextView username;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -50,7 +53,7 @@ public class HomeFragment extends Fragment {
         user = FirebaseAuth.getInstance().getCurrentUser();
         firebaseAuth = FirebaseAuth.getInstance();
         username = view.findViewById(R.id.welcomeText);
-        initializeprofile();
+        initializeProfile();
 
         logout.setOnClickListener(v -> new MaterialAlertDialogBuilder(v.getContext())
                 .setTitle("MindCare")
@@ -66,7 +69,9 @@ public class HomeFragment extends Fragment {
         view.findViewById(R.id.affirmation).setOnClickListener(this::onAffirmationClick);
         view.findViewById(R.id.graph).setOnClickListener(this::onGraphClick);
         view.findViewById(R.id.camera).setOnClickListener(this::onCameraClick);
-
+        view.findViewById(R.id.sleepTracker).setOnClickListener(this::onSleepTrackerClick);
+        view.findViewById(R.id.voiceAssistant).setOnClickListener(this::onVoiceAssistantClick);
+        view.findViewById(R.id.funMode).setOnClickListener(this::onFunModeClick);
     }
 
     private void openLoginActivity() {
@@ -76,53 +81,53 @@ public class HomeFragment extends Fragment {
         requireActivity().finish();
     }
 
-    private void initializeprofile(){
-
-
+    private void initializeProfile() {
         user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             currentUserId = user.getUid();
-            // Firebase data fetching logic inside onViewCreated
-            FirebaseDatabase.getInstance().getReference("users").child(currentUserId).child("profile").addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if (snapshot.exists()) {
-                        String Name = snapshot.child("name").getValue(String.class);
-                        if (Name != null) {
-                            setuserdata(Name);
+            FirebaseDatabase.getInstance().getReference("Users").child(currentUserId).child("username")
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                String name = snapshot.getValue(String.class);
+                                username.setText("Hi, " + name + " 👋");
+                            }
                         }
-                    }
-                }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    Log.d("profileinitialization", "onCancelled: " + error.getMessage());
-                }
-            });
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Log.e("Firebase", "Failed to fetch username", error.toException());
+                        }
+                    });
         }
     }
 
-    private void setuserdata(String name){
-        username.setText("Hi, "+name+" \uD83D\uDC4B");
-
+    private void onExerciseClick(View view) {
+        startActivity(new Intent(requireContext(), GuidedExerciseActivity.class));
     }
 
-
-
-    public void onCameraClick(@Nullable View view) {
-        startActivity(new Intent(getContext(), MoodCameraActivity.class));
+    private void onAffirmationClick(View view) {
+        startActivity(new Intent(requireContext(), DailyAffirmationActivity.class));
     }
 
-
-    public void onAffirmationClick(@Nullable View view) {
-        startActivity(new Intent(getContext(), DailyAffirmationActivity.class));
+    private void onGraphClick(View view) {
+        startActivity(new Intent(requireContext(), MoodGraphActivity.class));
     }
 
-    public void onExerciseClick(@Nullable View view) {
-        startActivity(new Intent(getContext(), GuidedExerciseActivity.class));
+    private void onCameraClick(View view) {
+        startActivity(new Intent(requireContext(), MoodCameraActivity.class));
     }
 
-    public void onGraphClick(@Nullable View view) {
-        startActivity(new Intent(getContext(), MoodGraphActivity.class));
+    private void onSleepTrackerClick(View view) {
+        startActivity(new Intent(requireContext(), SleepTrackerActivity.class));
+    }
+
+    private void onVoiceAssistantClick(View view) {
+        startActivity(new Intent(requireContext(), VoiceRecorder.class));
+    }
+
+    private void onFunModeClick(View view) {
+        startActivity(new Intent(requireContext(), FunModeActivity.class));
     }
 }

@@ -63,7 +63,23 @@ dependencies {
     implementation(libs.credentials)
     implementation(libs.credentials.play.services.auth)
     implementation(libs.googleid)
+    implementation(libs.camera.view)
+    implementation(libs.vision.common)
+    implementation(libs.play.services.mlkit.face.detection)
+    implementation(libs.camera.lifecycle)
+    implementation(libs.play.services.fitness)
+
+    implementation(libs.play.services.auth)
+    implementation(libs.play.services.location)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    //camera
+    implementation(libs.camera.core)
+    implementation(libs.camera.lifecycle.v130)
+    implementation(libs.camera.view.v130)
+
+    // Camera2 implementation
+    implementation(libs.camera.camera2)
 }

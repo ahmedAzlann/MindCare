@@ -3,6 +3,24 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
+    <!-- Permissions -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+
+    <!-- Permission to use microphone for voice recognition -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+
+    <!-- Ensure speech recognition service is available -->
+    <uses-feature android:name="android.hardware.microphone" android:required="true"/>
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -44,6 +62,48 @@
         <activity
             android:name=".MainActivity"
             android:exported="true" />
+
+        <!-- Tic-Tac-Toe Game Activity -->
+        <activity
+            android:name=".TicTacToeActivity"
+            android:exported="false"
+            />
+
+        <!-- Voice Recorder Activity -->
+        <activity
+            android:name=".VoiceRecorder"
+            android:exported="false"
+            />
+
+        <!-- Riddle Game Activity -->
+        <activity
+            android:name=".RiddleGameActivity"
+            android:label="Riddle Game"
+            />
+
+        <!-- Sleep Tracker Activity -->
+        <activity
+            android:name=".SleepTrackerActivity"
+            android:label="Sleep Tracker"
+            />
+
+        <!-- Fun Mode Activity -->
+        <activity
+            android:name=".FunModeActivity"
+            android:label="Fun Mode"
+            />
+
+        <!-- Breathing Exercise Activity (NEWLY ADDED) -->
+        <activity
+            android:name=".BreathingActivity"
+            android:label="Breathing Exercise"
+            />
+
+        <!-- SOS Emergency Activity (NEWLY ADDED) -->
+        <activity
+            android:name=".SOSActivity"
+            android:label="Emergency SOS"
+            />
     </application>
 
 </manifest>

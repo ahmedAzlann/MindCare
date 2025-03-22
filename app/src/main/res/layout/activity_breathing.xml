@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+        <!-- Background Image -->
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/meditation"
+            android:scaleType="centerCrop"/>
+
+        <!-- Dark Overlay -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#99000000"/>  <!-- 60% Transparent Black -->
+
+        <!-- Content -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="20dp">
+
+                <!-- Instruction Text -->
+                <TextView
+                    android:id="@+id/txt_instruction"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Get Ready To Relax..."
+                    android:textSize="20sp"
+                    android:textColor="#A8DBF6"
+                    android:letterSpacing="0.05"
+                    android:textStyle="bold"
+                    android:layout_marginTop="40dp"/>
+
+                <!-- Breathing Circle Animation -->
+                <ImageView
+                    android:id="@+id/img_breathing_circle"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:src="@drawable/breathing_circle"
+                    android:scaleType="centerInside"
+                    android:layout_marginBottom="30dp"/>
+
+                <!-- Duration Selection -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Select Duration (Minutes)"
+                    android:textSize="18sp"
+                    android:textColor="#FFFFFF"
+                    android:shadowColor="#000000"
+                    android:shadowRadius="9"
+                    android:shadowDx="1"
+                    android:shadowDy="1"
+                    android:layout_marginBottom="10dp"/>
+
+                <SeekBar
+                    android:id="@+id/seek_duration"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="2"
+                    android:progress="1"/>
+
+                <!-- Music Selection Dropdown -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Choose Relaxing Music"
+                    android:textSize="18sp"
+                    android:textColor="@color/white"
+                    android:shadowColor="#000000"
+                    android:shadowRadius="9"
+                    android:shadowDx="1"
+                    android:shadowDy="1"
+                    android:layout_marginTop="20dp"/>
+
+                <Spinner
+                    android:id="@+id/spinner_music"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:drawable/btn_dropdown"/>
+
+                <!-- Start Button -->
+                <Button
+                    android:id="@+id/btn_start"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Start"
+                    android:textSize="18sp"
+                    android:backgroundTint="#A5A9054A"
+                    android:textColor="@android:color/white"
+                    android:layout_marginTop="20dp"/>
+
+        </LinearLayout>
+
+</FrameLayout>

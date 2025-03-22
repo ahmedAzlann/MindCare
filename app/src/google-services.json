@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "283363229290",
+    "firebase_url": "https://mindcare-39705-default-rtdb.firebaseio.com",
+    "project_id": "mindcare-39705",
+    "storage_bucket": "mindcare-39705.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:283363229290:android:48f4bc5fa458b7ad179413",
+        "android_client_info": {
+          "package_name": "com.azlan.mindcare"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5qrdb-lp3hJ5km-xIau3T4n0f54JuhWM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

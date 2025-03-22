@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#F5F5F5"
+    android:gravity="center_horizontal">
+
+    <!-- Title for Riddle Game -->
+    <TextView
+        android:id="@+id/gameTitleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Riddle Game"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:textColor="#6200EE"
+        android:layout_gravity="center"
+        android:layout_marginBottom="24dp"/>
+
+    <!-- Riddle Question -->
+    <TextView
+        android:id="@+id/riddleTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Riddle will appear here."
+        android:textSize="24sp"
+        android:textColor="#333333"
+        android:background="#FFFFFF"
+        android:padding="16dp"
+        android:layout_marginBottom="24dp"
+        android:textAlignment="center"
+        android:gravity="center"/>
+
+    <!-- Timer -->
+    <TextView
+        android:id="@+id/timerTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Time: 30"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#FF5722"
+        android:layout_gravity="center"
+        android:layout_marginBottom="24dp"/>
+
+    <!-- User Answer Input -->
+    <EditText
+        android:id="@+id/userAnswerEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Your answer"
+        android:textSize="18sp"
+        android:textColor="#212121"
+        android:background="#FFFFFF"
+        android:padding="16dp"
+        android:layout_marginBottom="24dp"/>
+
+    <!-- Submit Button -->
+    <Button
+        android:id="@+id/submitButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Submit Answer"
+        android:textSize="18sp"
+        android:textColor="#FFFFFF"
+        android:background="#6200EE"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
+        android:padding="12dp"/>
+
+    <!-- Speech Button -->
+    <Button
+        android:id="@+id/speechButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Speak Riddle"
+        android:textSize="18sp"
+        android:textColor="#FFFFFF"
+        android:background="#03DAC5"
+        android:layout_gravity="center"
+        android:layout_marginBottom="24dp"
+        android:padding="12dp"/>
+
+    <!-- Score Display -->
+    <TextView
+        android:id="@+id/scoreTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Score: 0"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#4CAF50"
+        android:layout_gravity="center"
+        android:layout_marginBottom="24dp"/>
+
+    <!-- Result (Correct/Incorrect Answer) -->
+    <TextView
+        android:id="@+id/resultTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Correct Answer: "
+        android:textSize="20sp"
+        android:textColor="#333333"
+        android:background="#FFFFFF"
+        android:padding="12dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="24dp"/>
+
+    <!-- Next Button -->
+    <Button
+        android:id="@+id/nextRiddleButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Next Riddle"
+        android:textSize="18sp"
+        android:textColor="#FFFFFF"
+        android:background="#6200EE"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
+        android:visibility="gone"
+        android:padding="12dp"/>
+
+    <!-- Win/Loss Message -->
+    <TextView
+        android:id="@+id/winLoseTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#FF0000"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:layout_marginBottom="24dp"/>
+</LinearLayout>
