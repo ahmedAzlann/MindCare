@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="#F8F8F8">
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/affirmationTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Daily Affirmation"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="#333333"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"/>
+
+    <!-- Affirmation Text -->
+    <TextView
+        android:id="@+id/affirmationText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="You are strong and capable!"
+        android:textSize="18sp"
+        android:textColor="#555555"
+        android:gravity="center"
+        android:layout_below="@id/affirmationTitle"
+        android:layout_marginTop="30dp"
+        android:padding="20dp"
+        android:background="@android:color/white"
+        android:elevation="4dp"/>
+
+    <!-- Next Affirmation Button -->
+    <Button
+        android:id="@+id/btnNextAffirmation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Next Affirmation"
+        android:layout_below="@id/affirmationText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@color/primary_blue"
+        android:textColor="@android:color/white"/>
+
+    <!-- Text-to-Speech Button -->
+    <ImageView
+        android:contentDescription="spekaer"
+        android:id="@+id/btnSpeak"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:clickable="true"
+        android:src="@drawable/speaker"
+        android:layout_below="@id/btnNextAffirmation"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        />
+</RelativeLayout>

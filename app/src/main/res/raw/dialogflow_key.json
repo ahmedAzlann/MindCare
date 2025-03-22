@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "healthbot-lasm",
+  "private_key_id": "4619c979c21db61503d4b9757f4ed030ecc1913c",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCzYyXpcVVpwBTs\nxp9qeCDSCj4g+ZWgqqy2aK5VjFlFYQursw0e1MaGxFzuPnoPsTyJQYK3/80Txm54\nnyXaYY/S1o2CBrnwA0bW+yM34fiTX26ToORpRTJ71zjhmlge5tCzNoJ/0CaAI6Kb\nw/C+RrS+DhCIJxYcDX02Q8GAsOrkDD3xOrWDP3Q9l9Ol9OABqjldLEaFg344xhdm\njdGPd/2J3GWwbJs0c2ugLWTaIBUNdjjYtoGDNkYNBv6u7Z01JEkyM0xOKZwqNnvt\nVW9WSmN63S8+y5F+LHwBwhPBUtX/z/fjtJpHX34O5fUtAuqAMMCAnQVpRnJH+bQc\nC6nlc9tHAgMBAAECggEAERbhj+y0ScYuK1eWUxetbY6v2CDCAjPGqMkuNCFe7v7n\nLezf07XkUW037gAIgG6bdfcsudSy6vuQOKOItDyiul/ZzHvrKMdXIoUVGAf9Notb\nE56HRAdLxbdKLvJIpNQxjteJjrcvHWDHs/XyfSrSB/nh1bN+v4UCQbIqWm7NFPtA\nLbMPHQ3nBEATi0pZibKja+Ekl7a4um3wQwOUSq7a7sbXECJSz75Xsm+m9YcgoH/0\nuA2qrgjCTlCp1e28tPvUVRWXulC0OYkSayIV01U1pOVsp7mfL6yqbQK3jGKOoDvu\nSoS9YKO9pXefASApGyY0GL5TT5683+XWGcVXnBXneQKBgQD9NfyQNCYlo3MPjYKU\ndEtsqmkFybHfhj+NO3SQHjsi8dqakU4TnLc689D657Qwr8+trUhPzI4p7LEC2fX0\njCX1RmaHfQPS4/It0yKKGSgrv6eybDcifOnH624uevpfYO+StRzAsoSgWZzSAJuD\nZwpsyb/44KUmCxl7u6BiXNBFAwKBgQC1XP20VQCvjWEsGxdn8vxUUv0Y7OMLal+X\nTslHSW8S9rvjrwAZZ+knFmwV5Bl8SCx53aoHaQ1fwyctJqfCInbZIMEuR/+bPhhR\nki2sX+tfZL8fCroBJRp/7Yo8H7EHsM4R4K+Fc6VHh3Un1WeQwMqTfjZgYz/cpEoy\niZfCtvfTbQKBgQCCcKpAGy0/nHjsnSiUk2g7fXoGykWAcacReXxttbUfJlpH3+zJ\nu6TEkM+qQWyY3CjvPmIPAcCGpnD1mBTVOtFfDjpJN8SdgmHC645Sd+0yxFN+XbL1\naEYCgCzNcvrB4azo9bXvKseZ1zArGrcCNTWwnynu6sMI2xTwodJYeZmswwKBgQCO\nL51np8yl1T19iq/K+yEAKx/qTq2h4X+X7Fi43sWKJI4hbq2xPVn5HwcWEoI4gYz8\n7d/Dd4TYsvMf3tJezQ5II/nQAvpOB1yhduz/2yN44k9EUvCIvUINUXmysVXlJaQp\nN/Hjukq1zWj4FcLgJYWsJKMU5jrHDLZu8JheO3wH8QKBgQCE4wlKCanL6UtO9Xeu\nCDMG1F2p+xsd9ISs8sTs3Zuqrk5KY2UDs0KlP1pgWNP4sdnY3Z5AiCvjzZS8TP79\nAPzcmTo+a4o2IcxBzAZPG8NJDpBCHob7RfGaFoimvuvz97LHN4optIjdFKIcxMz5\ntQPwNlce5ZbW9txYnQ5WNcfT0g==\n-----END PRIVATE KEY-----\n",
+  "client_email": "mindcare-bot@healthbot-lasm.iam.gserviceaccount.com",
+  "client_id": "114496327563338992484",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/mindcare-bot%40healthbot-lasm.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.azlan.mindcare" />
+                  <option name="mobileSdkAppId" value="1:283363229290:android:48f4bc5fa458b7ad179413" />
+                  <option name="projectId" value="mindcare-39705" />
+                  <option name="projectNumber" value="283363229290" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
