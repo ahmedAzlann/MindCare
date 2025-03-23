@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.text.InputType;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -18,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -25,10 +27,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 public class SOSActivity extends AppCompatActivity {
 
-    private static final int PERMISSION_REQUEST_CODE = 100;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 100;
+    private static final int SMS_PERMISSION_REQUEST_CODE = 101;
     private static final String PREFS_NAME = "EmergencyContacts";
     private static final String EMERGENCY_CONTACT_KEY = "emergency_contact";
-    private static final String HELPLINE_NUMBER = "911"; // Update with actual helpline
+    private static final String HELPLINE_NUMBER = "911"; // Replace with actual helpline number
     private FusedLocationProviderClient fusedLocationClient;
     private String emergencyContact;
 
@@ -44,7 +47,7 @@ public class SOSActivity extends AppCompatActivity {
         Button messageButton = findViewById(R.id.btn_message);
         Button locationButton = findViewById(R.id.btn_location);
 
-        // Load saved emergency contact or ask for a new one
+        // Load saved emergency contact
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         emergencyContact = prefs.getString(EMERGENCY_CONTACT_KEY, null);
 
@@ -52,21 +55,16 @@ public class SOSActivity extends AppCompatActivity {
             askForEmergencyContact();
         }
 
-        // Panic Button: Trigger all actions
+        // Panic Button: Triggers Call, SMS, and Location
         panicButton.setOnClickListener(v -> {
             makeEmergencyCall();
-            sendEmergencyMessage();
-            shareLocation();
+            requestSMSPermission(); // Request permission before sending SMS
+            requestLocationPermission(); // Request permission before sharing location
         });
 
-        // Emergency Call
         callButton.setOnClickListener(v -> makeEmergencyCall());
-
-        // Emergency Message
-        messageButton.setOnClickListener(v -> sendEmergencyMessage());
-
-        // Share Live Location
-        locationButton.setOnClickListener(v -> shareLocation());
+        messageButton.setOnClickListener(v -> requestSMSPermission());
+        locationButton.setOnClickListener(v -> requestLocationPermission());
     }
 
     // Ask user for emergency contact number
@@ -79,15 +77,18 @@ public class SOSActivity extends AppCompatActivity {
         builder.setView(input);
 
         builder.setPositiveButton("Save", (dialog, which) -> {
-            emergencyContact = input.getText().toString();
-            SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit();
-            editor.putString(EMERGENCY_CONTACT_KEY, emergencyContact);
-            editor.apply();
-            Toast.makeText(SOSActivity.this, "Emergency contact saved!", Toast.LENGTH_SHORT).show();
+            emergencyContact = input.getText().toString().trim();
+            if (!emergencyContact.isEmpty()) {
+                SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit();
+                editor.putString(EMERGENCY_CONTACT_KEY, emergencyContact);
+                editor.apply();
+                Toast.makeText(SOSActivity.this, "Emergency contact saved!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(SOSActivity.this, "Invalid contact!", Toast.LENGTH_SHORT).show();
+            }
         });
 
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
-
         builder.show();
     }
 
@@ -98,53 +99,80 @@ public class SOSActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    // Request SMS Permission
+    private void requestSMSPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, SMS_PERMISSION_REQUEST_CODE);
+        } else {
+            sendEmergencyMessage();
+        }
+    }
+
     // Send an emergency SMS
     private void sendEmergencyMessage() {
-        if (emergencyContact == null) {
+        if (emergencyContact == null || emergencyContact.trim().isEmpty()) {
             askForEmergencyContact();
             return;
         }
+
         String message = "URGENT: I am in distress. Please help!";
+
         try {
             SmsManager smsManager = SmsManager.getDefault();
             smsManager.sendTextMessage(emergencyContact, null, message, null, null);
             Toast.makeText(this, "Emergency message sent!", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             Toast.makeText(this, "Failed to send message!", Toast.LENGTH_SHORT).show();
+            Log.e("SOSActivity", "SMS Error: " + e.getMessage());
+        }
+    }
+
+    // Request Location Permission
+    private void requestLocationPermission() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+        } else {
+            shareLocation();
         }
     }
 
     // Share Live Location
     private void shareLocation() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_CODE);
-            return;
-        }
-
         fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        if (location != null && emergencyContact != null) {
-                            String message = "My Live Location: https://www.google.com/maps?q=" + location.getLatitude() + "," + location.getLongitude();
+                .addOnSuccessListener(this, location -> {
+                    if (location != null && emergencyContact != null) {
+                        String message = "My Live Location: https://www.google.com/maps?q=" + location.getLatitude() + "," + location.getLongitude();
+                        try {
                             SmsManager smsManager = SmsManager.getDefault();
                             smsManager.sendTextMessage(emergencyContact, null, message, null, null);
                             Toast.makeText(SOSActivity.this, "Location shared!", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(SOSActivity.this, "Failed to retrieve location or contact not set!", Toast.LENGTH_SHORT).show();
+                        } catch (Exception e) {
+                            Toast.makeText(SOSActivity.this, "Failed to send location!", Toast.LENGTH_SHORT).show();
+                            Log.e("SOSActivity", "Location SMS Error: " + e.getMessage());
                         }
+                    } else {
+                        Toast.makeText(SOSActivity.this, "Failed to retrieve location or contact not set!", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
-    // Handle permission request result
+    // Handle permission request results
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSION_REQUEST_CODE && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            shareLocation();
-        } else {
-            Toast.makeText(this, "Location permission required!", Toast.LENGTH_SHORT).show();
+
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                shareLocation();
+            } else {
+                Toast.makeText(this, "Location permission required!", Toast.LENGTH_SHORT).show();
+            }
+        } else if (requestCode == SMS_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                sendEmergencyMessage();
+            } else {
+                Toast.makeText(this, "SMS permission required!", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

@@ -18,9 +18,11 @@ import android.widget.Toast;
 import com.azlan.mindcare.DailyAffirmationActivity;
 import com.azlan.mindcare.GuidedExerciseActivity;
 import com.azlan.mindcare.LoginActivity;
+import com.azlan.mindcare.MainActivity;
 import com.azlan.mindcare.MoodCameraActivity;
 import com.azlan.mindcare.MoodGraphActivity;
 import com.azlan.mindcare.R;
+import com.azlan.mindcare.SOSActivity;
 import com.azlan.mindcare.SleepTrackerActivity;
 import com.azlan.mindcare.VoiceRecorder;
 import com.azlan.mindcare.FunModeActivity;
@@ -56,7 +58,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        logout = view.findViewById(R.id.logout);
         user = FirebaseAuth.getInstance().getCurrentUser();
         firebaseAuth = FirebaseAuth.getInstance();
         username = view.findViewById(R.id.welcomeText);
@@ -65,25 +66,26 @@ public class HomeFragment extends Fragment {
         initializeProfile();
         fetchUserScore(); // Fetch the score from Firebase
 
-        logout.setOnClickListener(v -> new MaterialAlertDialogBuilder(v.getContext())
-                .setTitle("MindCare")
-                .setMessage("Are you sure you want to logout?")
-                .setPositiveButton("Yes", (dialog, which) -> {
-                    firebaseAuth.signOut();
-                    openLoginActivity();
-                })
-                .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
-                .show());
 
         view.findViewById(R.id.guidedexercise).setOnClickListener(this::onExerciseClick);
         view.findViewById(R.id.affirmation).setOnClickListener(this::onAffirmationClick);
-        view.findViewById(R.id.graph).setOnClickListener(this::onGraphClick);
+//        view.findViewById(R.id.graph).setOnClickListener(this::onGraphClick);
         view.findViewById(R.id.camera).setOnClickListener(this::onCameraClick);
         view.findViewById(R.id.sleepTracker).setOnClickListener(this::onSleepTrackerClick);
         view.findViewById(R.id.voiceAssistant).setOnClickListener(this::onVoiceAssistantClick);
         view.findViewById(R.id.funMode).setOnClickListener(this::onFunModeClick);
+        view.findViewById(R.id.bot).setOnClickListener(this::onBotClick);
+        view.findViewById(R.id.sos).setOnClickListener(this::onSosClick);
     }
 
+    private void onSosClick(View view) {
+        startActivity(new Intent(requireContext(), SOSActivity.class));
+    }
+
+
+    private void onBotClick(View view) {
+        startActivity(new Intent(requireContext(), MainActivity.class));
+    }
     private void openLoginActivity() {
         Intent intent = new Intent(requireContext(), LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -193,4 +195,6 @@ public class HomeFragment extends Fragment {
     private void onFunModeClick(View view) {
         startActivity(new Intent(requireContext(), FunModeActivity.class));
     }
+    
+
 }

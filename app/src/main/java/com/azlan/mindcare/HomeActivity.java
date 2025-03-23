@@ -60,8 +60,6 @@ public class HomeActivity extends AppCompatActivity {
                     selectedFragment = new ProfileFragment();
                 } else if (item.getItemId() == R.id.nav_journal) {
                     selectedFragment = new JournalFragment();
-                } else if (item.getItemId() == R.id.nav_insights) {
-                    selectedFragment = new InsightsFragment();
                 }
 
                 if (selectedFragment != null) {
