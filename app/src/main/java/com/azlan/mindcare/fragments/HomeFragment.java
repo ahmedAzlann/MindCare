@@ -1,10 +1,18 @@
 package com.azlan.mindcare.fragments;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -13,10 +21,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.azlan.mindcare.DailyAffirmationActivity;
 import com.azlan.mindcare.GuidedExerciseActivity;
 import com.azlan.mindcare.LoginActivity;
+import com.azlan.mindcare.MainActivity;
 import com.azlan.mindcare.MoodCameraActivity;
 import com.azlan.mindcare.MoodGraphActivity;
 import com.azlan.mindcare.R;
@@ -31,9 +41,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Random;
+import android.Manifest;
 public class HomeFragment extends Fragment {
 
-    ImageView logout;
     FirebaseUser user;
     FirebaseAuth firebaseAuth;
     String currentUserId;
@@ -49,21 +60,11 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        logout = view.findViewById(R.id.logout);
         user = FirebaseAuth.getInstance().getCurrentUser();
         firebaseAuth = FirebaseAuth.getInstance();
         username = view.findViewById(R.id.welcomeText);
         initializeProfile();
 
-        logout.setOnClickListener(v -> new MaterialAlertDialogBuilder(v.getContext())
-                .setTitle("MindCare")
-                .setMessage("Are you sure you want to logout?")
-                .setPositiveButton("Yes", (dialog, which) -> {
-                    firebaseAuth.signOut();
-                    openLoginActivity();
-                })
-                .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
-                .show());
 
         view.findViewById(R.id.guidedexercise).setOnClickListener(this::onExerciseClick);
         view.findViewById(R.id.affirmation).setOnClickListener(this::onAffirmationClick);
@@ -72,14 +73,10 @@ public class HomeFragment extends Fragment {
         view.findViewById(R.id.sleepTracker).setOnClickListener(this::onSleepTrackerClick);
         view.findViewById(R.id.voiceAssistant).setOnClickListener(this::onVoiceAssistantClick);
         view.findViewById(R.id.funMode).setOnClickListener(this::onFunModeClick);
+        view.findViewById(R.id.bot).setOnClickListener(this::onBotClick);
     }
 
-    private void openLoginActivity() {
-        Intent intent = new Intent(requireContext(), LoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        requireActivity().finish();
-    }
+
 
     private void initializeProfile() {
         user = FirebaseAuth.getInstance().getCurrentUser();
@@ -101,6 +98,10 @@ public class HomeFragment extends Fragment {
                         }
                     });
         }
+    }
+
+    private void onBotClick(View view) {
+        startActivity(new Intent(requireContext(), MainActivity.class));
     }
 
     private void onExerciseClick(View view) {
@@ -130,4 +131,6 @@ public class HomeFragment extends Fragment {
     private void onFunModeClick(View view) {
         startActivity(new Intent(requireContext(), FunModeActivity.class));
     }
+
+
 }

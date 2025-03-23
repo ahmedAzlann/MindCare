@@ -45,6 +45,7 @@ android {
 
 dependencies {
 
+    implementation(libs.lottie)
     implementation(libs.grpc.auth)
     implementation(libs.grpc.okhttp)
     implementation(libs.grpc.protobuf)
