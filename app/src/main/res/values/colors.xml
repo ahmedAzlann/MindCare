@@ -5,7 +5,9 @@
     <color name="primary_blue">#A7C7E7</color>
     <color name="primary_green">#B5E7A0</color>
     <color name="accent_blue">#6D98BA</color>
-    <color name="bgcolor">#F5F5F5</color>
+    <color name="light_gray">#F8F8F8</color>
+    <color name="dark_gray">#808080</color>
+    <color name="red">#FF0000</color>
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
