@@ -9,6 +9,12 @@ import android.widget.GridLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.Locale;
 import java.util.Random;
 
@@ -74,6 +80,7 @@ public class TicTacToeActivity extends AppCompatActivity {
             statusTextView.setText("You Win! 🎉");
             speak("Hurray! You win!");
             disableBoard();
+            updateScoreInFirebase(25);  // Add 25 points to score
         } else if (roundCount == 9) {
             statusTextView.setText("It's a Draw! 😐");
             speak("Oh no! It's a draw!");
@@ -84,6 +91,35 @@ public class TicTacToeActivity extends AppCompatActivity {
             new Handler().postDelayed(this::aiMove, 500);
         }
     }
+
+    private void updateScoreInFirebase(int points) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null) {
+            String userId = user.getUid();
+            DatabaseReference scoreRef = FirebaseDatabase.getInstance().getReference("users").child(userId).child("score");
+
+            // Retrieve the current score first
+            scoreRef.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    int previousScore = 0;
+                    if (task.getResult().exists()) {
+                        previousScore = task.getResult().getValue(Integer.class);  // Get existing score
+                    }
+
+                    int updatedScore = previousScore + points;  // Add new points
+
+                    // Update Firebase with the new total score
+                    scoreRef.setValue(updatedScore)
+                            .addOnSuccessListener(aVoid ->
+                                    Toast.makeText(TicTacToeActivity.this, "Score updated: " + updatedScore, Toast.LENGTH_SHORT).show())
+                            .addOnFailureListener(e ->
+                                    Toast.makeText(TicTacToeActivity.this, "Failed to update score", Toast.LENGTH_SHORT).show());
+                }
+            });
+        }
+    }
+
 
     private void aiMove() {
         if (roundCount >= 9) return;

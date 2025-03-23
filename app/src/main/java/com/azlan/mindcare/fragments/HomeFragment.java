@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.azlan.mindcare.DailyAffirmationActivity;
 import com.azlan.mindcare.GuidedExerciseActivity;
@@ -29,7 +30,12 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class HomeFragment extends Fragment {
 
@@ -37,12 +43,13 @@ public class HomeFragment extends Fragment {
     FirebaseUser user;
     FirebaseAuth firebaseAuth;
     String currentUserId;
-    TextView username;
+    TextView username, moodText;
+
+    DatabaseReference databaseReference; // Firebase Database Reference
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
@@ -53,7 +60,10 @@ public class HomeFragment extends Fragment {
         user = FirebaseAuth.getInstance().getCurrentUser();
         firebaseAuth = FirebaseAuth.getInstance();
         username = view.findViewById(R.id.welcomeText);
+        moodText = view.findViewById(R.id.moodScore);
+
         initializeProfile();
+        fetchUserScore(); // Fetch the score from Firebase
 
         logout.setOnClickListener(v -> new MaterialAlertDialogBuilder(v.getContext())
                 .setTitle("MindCare")
@@ -102,6 +112,59 @@ public class HomeFragment extends Fragment {
                     });
         }
     }
+
+    private void fetchUserScore() {
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            currentUserId = user.getUid();
+            databaseReference = FirebaseDatabase.getInstance().getReference("users").child(currentUserId);
+
+            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        int score = snapshot.child("score").getValue(Integer.class) != null ? snapshot.child("score").getValue(Integer.class) : 0;
+                        String lastActiveDate = snapshot.child("lastActiveDate").getValue(String.class);
+
+                        String todayDate = getCurrentDate(); // Get today's date
+
+                        if (lastActiveDate == null || !lastActiveDate.equals(todayDate)) {
+                            // If the user is opening the app for the first time today, add 10 points
+                            int newScore = score + 10;
+                            databaseReference.child("score").setValue(newScore);
+                            databaseReference.child("lastActiveDate").setValue(todayDate);
+                            moodText.setText("Your Current Mood Score: " + newScore + " ⭐");
+
+                            // Show a toast message
+                            Toast.makeText(requireContext(), "🎉 Hurray! Daily points added!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            moodText.setText("Your Current Mood Score: " + score + " ⭐");
+                        }
+                    } else {
+                        moodText.setText("Your Current Mood Score: 0 ⭐");
+                        databaseReference.child("score").setValue(0);
+                        databaseReference.child("lastActiveDate").setValue(getCurrentDate());
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e("Firebase", "Failed to fetch score", error.toException());
+                }
+            });
+        }
+    }
+
+    private String getCurrentDate() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        return sdf.format(new Date());
+    }
+
+
+//    private void updateMoodText(int score) {
+//
+//
+//    }
 
     private void onExerciseClick(View view) {
         startActivity(new Intent(requireContext(), GuidedExerciseActivity.class));

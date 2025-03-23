@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,14 +17,20 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.face.Face;
 import com.google.mlkit.vision.face.FaceDetection;
 import com.google.mlkit.vision.face.FaceDetector;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
@@ -32,6 +39,7 @@ import java.util.concurrent.Executors;
 public class MoodCameraActivity extends AppCompatActivity {
 
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
+
     private static final String[] REQUIRED_PERMISSIONS = {
             Manifest.permission.CAMERA
     };
@@ -41,6 +49,10 @@ public class MoodCameraActivity extends AppCompatActivity {
     private ExecutorService cameraExecutor;
     private FaceDetector faceDetector;
     private int userScore = 0; // User score
+
+    // Firebase
+    private DatabaseReference databaseReference;
+    private FirebaseAuth firebaseAuth;
 
     // Mood smoothing variables
     private static final int SMOOTHING_WINDOW_SIZE = 5;
@@ -59,9 +71,26 @@ public class MoodCameraActivity extends AppCompatActivity {
         scoreTextView = findViewById(R.id.scoreTextView);
         cameraExecutor = Executors.newSingleThreadExecutor();
 
+        // Initialize Firebase
+        firebaseAuth = FirebaseAuth.getInstance();
+        databaseReference = FirebaseDatabase.getInstance().getReference("users");
+
         setupFaceDetector();
         requestPermissions();
+        fetchUserScore(); // Fetch and display the score
     }
+
+    private void fetchUserScore() {
+        String userId = firebaseAuth.getCurrentUser().getUid();
+
+        databaseReference.child(userId).child("score").get().addOnSuccessListener(dataSnapshot -> {
+            if (dataSnapshot.exists()) {
+                userScore = dataSnapshot.getValue(Integer.class) != null ? dataSnapshot.getValue(Integer.class) : 0;
+                runOnUiThread(() -> scoreTextView.setText("Score: " + userScore)); // Update UI
+            }
+        }).addOnFailureListener(e -> Log.e("Firebase", "Failed to fetch user score", e));
+    }
+
 
     private void requestPermissions() {
         if (!hasPermissions()) {
@@ -160,7 +189,6 @@ public class MoodCameraActivity extends AppCompatActivity {
                 });
     }
 
-
     private void updateStableMood(String newMood) {
         moodQueue.add(newMood);
 
@@ -173,45 +201,69 @@ public class MoodCameraActivity extends AppCompatActivity {
 
         if (!mostFrequentMood.equals(lastStableMood)) {
             lastStableMood = mostFrequentMood;
-            moodStartTime = currentTime; // Reset start time for new mood
+            moodStartTime = currentTime;
             runOnUiThread(() -> moodTextView.setText("Mood: " + lastStableMood));
         } else if (currentTime - moodStartTime >= 3000 && currentTime - lastScoreUpdateTime > 24 * 60 * 60 * 1000) {
             updateScore(mostFrequentMood);
             lastScoreUpdateTime = currentTime;
         }
     }
-    private void updateScore(String mood) {
-        int moodScore = 0;
-        if (mood.equals("😊 Happy")) {
-            moodScore = 30;
-        } else if (mood.equals("😐 Neutral")) {
-            moodScore = 20;
-        } else if (mood.equals("😱 Surprised")) {
-            moodScore = 10;
-        }
 
-        userScore += moodScore;
-        runOnUiThread(() -> scoreTextView.setText("Score: " + userScore));
+    private void updateScore(String mood) {
+        String userId = firebaseAuth.getCurrentUser().getUid();
+        String todayDate = getCurrentDate(); // Get today's date
+
+        databaseReference.child(userId).get().addOnSuccessListener(dataSnapshot -> {
+            if (dataSnapshot.exists()) {
+                userScore = dataSnapshot.child("score").getValue(Integer.class) != null ?
+                        dataSnapshot.child("score").getValue(Integer.class) : 0;
+                String lastMoodScoreDate = dataSnapshot.child("lastMoodScoreDate").getValue(String.class);
+
+                // Check if the last update was today
+                if (lastMoodScoreDate != null && lastMoodScoreDate.equals(todayDate)) {
+                    Log.d("MoodCamera", "Points already given today.");
+                    return; // Exit to prevent duplicate points
+                }
+
+                // Assign points based on mood
+                int moodScore = mood.equals("😊 Happy") ? 30 :
+                        mood.equals("😐 Neutral") ? 20 :
+                                mood.equals("😱 Surprised") ? 10 : 0;
+
+                userScore += moodScore;
+
+                // Update UI
+                runOnUiThread(() -> scoreTextView.setText("Score: " + userScore));
+
+                // Update Firebase
+                databaseReference.child(userId).child("score").setValue(userScore);
+                databaseReference.child(userId).child("lastMoodScoreDate").setValue(todayDate);
+
+                // Show a toast message for successful points update
+                runOnUiThread(() ->
+                        Toast.makeText(MoodCameraActivity.this, "🎉 Mood points added for today!", Toast.LENGTH_SHORT).show()
+                );
+
+            } else {
+                // If user data doesn't exist, initialize it
+                databaseReference.child(userId).child("score").setValue(0);
+                databaseReference.child(userId).child("lastMoodScoreDate").setValue(todayDate);
+            }
+        }).addOnFailureListener(e -> Log.e("Firebase", "Failed to fetch user data", e));
     }
+    private String getCurrentDate() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        return sdf.format(new Date());
+    }
+
+
 
     private String getMostFrequentMood() {
         Map<String, Integer> frequencyMap = new HashMap<>();
         for (String mood : moodQueue) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                frequencyMap.put(mood, frequencyMap.getOrDefault(mood, 0) + 1);
-            }
+            frequencyMap.put(mood, frequencyMap.getOrDefault(mood, 0) + 1);
         }
 
-
-
-        String mostFrequent = lastStableMood;
-        int maxCount = 0;
-        for (Map.Entry<String, Integer> entry : frequencyMap.entrySet()) {
-            if (entry.getValue() > maxCount) {
-                maxCount = entry.getValue();
-                mostFrequent = entry.getKey();
-            }
-        }
-        return mostFrequent;
+        return frequencyMap.entrySet().stream().max(Map.Entry.comparingByValue()).get().getKey();
     }
 }

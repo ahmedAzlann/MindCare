@@ -15,6 +15,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.azlan.mindcare.fragments.HomeFragment;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -35,6 +39,7 @@ public class RiddleGameActivity extends AppCompatActivity {
     private long timeLeftInMillis = 30000;  // 30 seconds timer
     private List<String[]> riddles;
     private CountDownTimer countDownTimer;
+
 
     private static final String PREFS_NAME = "RiddleGamePrefs";
     private static final String KEY_TIME_LEFT = "timeLeft";
@@ -279,10 +284,41 @@ public class RiddleGameActivity extends AppCompatActivity {
     }
 
     private void endGame() {
-        // Show a message when the game ends
+        // Get the current user
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null) {
+            String userId = user.getUid();
+            DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("users").child(userId).child("score");
+
+            // Retrieve the current score first
+            databaseRef.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    int previousScore = 0;
+                    if (task.getResult().exists()) {
+                        previousScore = task.getResult().getValue(Integer.class);  // Get the existing score
+                    }
+
+                    int updatedScore = previousScore + score;  // Add new score
+
+                    // Update Firebase with the new total score
+                    databaseRef.setValue(updatedScore)
+                            .addOnSuccessListener(aVoid ->
+                                    Toast.makeText(RiddleGameActivity.this, "Score updated successfully!", Toast.LENGTH_SHORT).show())
+                            .addOnFailureListener(e ->
+                                    Toast.makeText(RiddleGameActivity.this, "Failed to update score", Toast.LENGTH_SHORT).show());
+                }
+            });
+        }
+
+        // Show final score message
         Toast.makeText(this, "Game Over! Your final score is: " + score, Toast.LENGTH_LONG).show();
-        Intent intent = new Intent(RiddleGameActivity.this, HomeFragment.class); // Or any activity to navigate to after game over
+
+        // Navigate to HomeFragment (if applicable)
+        Intent intent = new Intent(RiddleGameActivity.this, HomeFragment.class);
         startActivity(intent);
         finish();
     }
+
+
 }
